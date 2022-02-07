@@ -33,6 +33,8 @@ def create_login_manager(app):
     login_manager.init_app(app)
 
     # Noga: load_user is defined in create_login_manager, and no one calls it.
+    # Ruth: it's inside the function, I call it in "create_login_manager(app)"- line 45
+    #       according to the documentation of flask-login, this is required for logging-in.
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
@@ -125,9 +127,13 @@ def logout():
 # Noga: When signing up, you can test and see that the signed up user is the one
 # being logged in (and not the latest logged in user, as we thought).
 # If you can't think of how to test it, ping me and we'll figure it out together.
+# Ruth: You're right.. the new user is logged in successfully indeed.
+#       The home page now shows the name of tne user logged in and it's correct. 
 # So, if the user IS being logged in correctly... What else could be the problem?
 # Try and figure out why login works and sign_up doesn't. There's one big
 # difference between them.
+# Ruth: I think I found it! thanks so much! :-)
+#       If you think there are other problems please let me know.
 def sign_up():
 
     if request.method == 'POST':
@@ -148,11 +154,10 @@ def sign_up():
             new_user = User(name=nickname, password=generate_password_hash(password1, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
-
-            login_user(new_user)
+            session["user_id"] = new_user.id
+            login_user(new_user, remember=True)
             flash('Account created!', category='success')
             return redirect(url_for('home'))
-
     return render_template("sign_up.html", user=current_user)
 
 
