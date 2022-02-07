@@ -1,15 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Home-{{ user.name }}{% endblock %}
 
 {% block content %}
-<h1>Home page</h1>
-<h2>Hi {{user.name}}</h2>
+<h1>Hi {{ user.name }}</h1>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+<h2>Solve the exercise</h2>
+
 
 <form class="form" action="." method="POST">
     <div class="form-group">
         <span class="col-lg-2">{{ question }}</span>
         <div>
-        <label for="answer">Answer</label>
+        <label for="answer">Solution</label>
         <input
           type ="text"
           class="form-control"
@@ -25,7 +30,31 @@
     <button type="submit" class="btn btn-primary">Check</button>
   </div>
 </form>
+</div>
+<div class="col">
+<h2>Your score is: {{ score }}</h2>
+<p>WELL DONE!</p>
+</div>
+</div>
+</div>
 
-<h3>{{solved}}</h3>
-<h3>{{score}}</h3>
+<div class="accordion-flush" id="accordionEx">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="flush-headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        Exercises you successfully solved until now
+      </button>
+    </h2>
+    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionEx">
+      <div class="accordion-body">
+        <ul>
+          {% for ex in solved %}
+          <li>{{ ex }}</li>
+          {% endfor %}
+        </ul> 
+      </div>
+    </div>
+  </div>
+
+
 {% endblock %}

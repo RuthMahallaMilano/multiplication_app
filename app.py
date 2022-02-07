@@ -86,6 +86,7 @@ def home():
         session["current_question"] = "1"
 
     elif session["current_question"] not in exercises_dict:   # not sure it works
+        session.pop("current_question")
         return render_template("success.html", user=current_user)
 
     solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
@@ -102,9 +103,9 @@ def login():
         nickname = request.form.get('nickname')
         password = request.form.get('password')
         user = User.query.filter_by(name=nickname).first()
-        session["user_id"] = user.id
         if user:
             if check_password_hash(user.password, password):
+                session["user_id"] = user.id
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 return redirect(url_for('home'))
