@@ -1,10 +1,13 @@
 from consts import app, db, DB_PATH
-from flask import session, render_template, request, flash, redirect, url_for
-from os import path
+
+from flask import flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, LoginManager, login_required, login_user, logout_user
+
 from model import Exercise, User
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+
+from os import path
 import random
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def create_database():
@@ -32,21 +35,9 @@ def create_login_manager(app):
     login_manager.login_view = 'login'
     login_manager.init_app(app)
 
-    # Noga: load_user is defined in create_login_manager, and no one calls it.
-    # Ruth: it's inside the function, I call it in "create_login_manager(app)"- line 45
-    #       according to the documentation of flask-login, this is required for logging-in.
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
-
-
-create_database()
-create_exercises_table()
-create_login_manager(app)
-
-
-#TODO  ליצור עוד כדף בית שמופיעים בו כל היוזרים והתוצאות שלהם????
-# Noga: That could be neat, if you find the time :)
 
 
 def get_random_exercises_dict():
@@ -54,18 +45,18 @@ def get_random_exercises_dict():
     random.shuffle(exercises)
     shuffled_exercises = [{'ex': ex.ex, 'answer': ex.answer} for ex in exercises]
     d = dict(enumerate(shuffled_exercises, 1))
-    # print(d)
     return {str(key): value for key, value in d.items()}
 
 
+create_database()
+create_exercises_table()
+create_login_manager(app)
 exercises_dict = get_random_exercises_dict()
-# print(exercises_dict)
 
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-
     if request.method == 'POST':
         entered_answer = request.form.get('answer')
         if not entered_answer:
@@ -81,24 +72,19 @@ def home():
             db.session.add(user)
             db.session.commit()
             session["current_question"] = str(int(session["current_question"]) + 1)
-
     if "current_question" not in session:
         session["current_question"] = "1"
-
-    elif session["current_question"] not in exercises_dict:   # not sure it works
+    elif session["current_question"] not in exercises_dict:
         session.pop("current_question")
         return render_template("success.html", user=current_user)
-
     solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
     solved = [exercise.ex for exercise in solved_exercises]
     score = sum([exercise.score for exercise in solved_exercises])
-
     return render_template("home.html", question=exercises_dict[session["current_question"]]["ex"], user=current_user, solved=solved, score=score)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == 'POST':
         nickname = request.form.get('nickname')
         password = request.form.get('password')
@@ -113,7 +99,6 @@ def login():
                 flash('Incorrect password, try again.', category='error')
         else:
             flash('Nickname does not exist.', category='error')
-
     return render_template("login.html", user=current_user)
 
 
@@ -125,23 +110,11 @@ def logout():
 
 
 @app.route('/sign-up', methods=['GET', 'POST'])
-# Noga: When signing up, you can test and see that the signed up user is the one
-# being logged in (and not the latest logged in user, as we thought).
-# If you can't think of how to test it, ping me and we'll figure it out together.
-# Ruth: You're right.. the new user is logged in successfully indeed.
-#       The home page now shows the name of tne user logged in and it's correct. 
-# So, if the user IS being logged in correctly... What else could be the problem?
-# Try and figure out why login works and sign_up doesn't. There's one big
-# difference between them.
-# Ruth: I think I found it! thanks so much! :-)
-#       If you think there are other problems please let me know.
 def sign_up():
-
     if request.method == 'POST':
         nickname = request.form.get('nickname')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
-
         user = User.query.filter_by(name=nickname).first()
         if user:
             flash('User already exists.', category='error')
@@ -158,7 +131,7 @@ def sign_up():
             session["user_id"] = new_user.id
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('home'))
+            return redirect(url_for('home'))    
     return render_template("sign_up.html", user=current_user)
 
 
