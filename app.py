@@ -93,7 +93,7 @@ def login():
             if check_password_hash(user.password, password):
                 session["user_id"] = user.id
                 flash('Logged in successfully!', category='success')
-                login_user(user)
+                login_user(user, remember=True)
                 return redirect(url_for('home'))
             else:
                 flash('Incorrect password, try again.', category='error')
@@ -129,7 +129,7 @@ def sign_up():
             db.session.add(new_user)
             db.session.commit()
             session["user_id"] = new_user.id
-            login_user(new_user)
+            login_user(new_user, remember=True)
             flash('Account created!', category='success')
             return redirect(url_for('home'))    
     return render_template("sign_up.j2", user=current_user)
