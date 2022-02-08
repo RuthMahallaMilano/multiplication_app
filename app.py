@@ -1,6 +1,6 @@
 from consts import app, db, DB_PATH
 
-from flask import flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user
 
 from model import Exercise, User
@@ -10,13 +10,13 @@ import random
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-def create_database():
+def create_database() -> None:
     if not path.exists(DB_PATH):
         db.create_all()
         print('Created Database!')
 
 
-def create_exercises_table():
+def create_exercises_table() -> None:
     print(len(Exercise.query.all()))
     if len(Exercise.query.all()) == 0:
         for i in range(1, 11):
@@ -30,7 +30,7 @@ def create_exercises_table():
         db.session.commit()
 
 
-def create_login_manager(app):
+def create_login_manager(app: Flask) -> None:
     login_manager = LoginManager()
     login_manager.login_view = 'login'
     login_manager.init_app(app)
@@ -40,7 +40,7 @@ def create_login_manager(app):
         return User.query.get(int(id))
 
 
-def get_random_exercises_dict():
+def get_random_exercises_dict() -> dict:
     exercises = Exercise.query.all()
     random.shuffle(exercises)
     shuffled_exercises = [{'ex': ex.ex, 'answer': ex.answer} for ex in exercises]
@@ -135,4 +135,4 @@ def sign_up():
     return render_template("sign_up.html", user=current_user)
 
 
-app.run(debug=True)
+app.run()

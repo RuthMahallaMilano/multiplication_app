@@ -11,13 +11,13 @@ SECRETKEY = os.getenv("KEY")
 DB_PATH = 'sqlite:///C:\\Users\\israe\\homework\\week15\\multiplication_app\\multiplication.db'
 
 
-def init_app():
+def init_app() -> Flask:
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRETKEY
     return app
 
 
-def init_db_connection(flask_app):
+def init_db_connection(flask_app: Flask) -> SQLAlchemy:
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = DB_PATH
     db = SQLAlchemy(flask_app)
     return db
