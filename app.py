@@ -76,11 +76,11 @@ def home():
         session["current_question"] = "1"
     elif session["current_question"] not in exercises_dict:
         session.pop("current_question")
-        return render_template("success.html", user=current_user)
+        return render_template("success.j2", user=current_user)
     solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
     solved = [exercise.ex for exercise in solved_exercises]
     score = sum([exercise.score for exercise in solved_exercises])
-    return render_template("home.html", question=exercises_dict[session["current_question"]]["ex"], user=current_user, solved=solved, score=score)
+    return render_template("home.j2", question=exercises_dict[session["current_question"]]["ex"], user=current_user, solved=solved, score=score)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -99,7 +99,7 @@ def login():
                 flash('Incorrect password, try again.', category='error')
         else:
             flash('Nickname does not exist.', category='error')
-    return render_template("login.html", user=current_user)
+    return render_template("login.j2", user=current_user)
 
 
 @app.route('/logout')
@@ -132,7 +132,7 @@ def sign_up():
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
             return redirect(url_for('home'))    
-    return render_template("sign_up.html", user=current_user)
+    return render_template("sign_up.j2", user=current_user)
 
 
 app.run()

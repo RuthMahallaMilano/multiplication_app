@@ -200,8 +200,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,windows,git
 
 __pycache__
-<<<<<<< HEAD
 Upload_270.zip
-multiplication.db
-=======
->>>>>>> fc87b3c5688c5f55094f026f533ec46ea9fe4907
