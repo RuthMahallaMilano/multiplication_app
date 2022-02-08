@@ -10,7 +10,7 @@
       <h3>Solve the exercise</h3>
       <form class="form" action="." method="POST">
         <div class="form-group">
-          <span class="ex col-lg-2">{{ question }}</span>
+          <span class="ex col-lg-2">{{ question }} correct: {{ exercises_dict[session["current_question"]]["answer"] }}</span>
           <div class="ans">
             <label for="answer">Your answer:</label>
             <input
