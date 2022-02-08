@@ -135,4 +135,5 @@ def sign_up():
     return render_template("sign_up.j2", user=current_user)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

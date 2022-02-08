@@ -1,1 +1,1 @@
-web: gunicorn app:consts
+web: gunicorn app:app
