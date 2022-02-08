@@ -62,7 +62,6 @@ def home():
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(exercises_dict[session["current_question"]]["answer"]):
-            flash(exercises_dict[session["current_question"]]["answer"], category="error")
             flash("The answer is incorrect. Try again.", category="error")
         else:
             flash('Correct answer!', category='success')
