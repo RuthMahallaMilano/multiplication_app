@@ -8,7 +8,14 @@ load_dotenv()
 
 SECRETKEY = os.getenv("KEY")
 
-DB_PATH = 'sqlite:///C:\\Users\\israe\\homework\\week15\\multiplication_app\\multiplication.db'
+def get_db_path() -> str:
+    DB_PATH = os.getenv("DATABASE_URL")
+    if DB_PATH.startswith("postgres://"):
+        DB_PATH = DB_PATH.replace("postgres://", "postgresql://", 1)
+    return DB_PATH
+
+
+DB_PATH = get_db_path()
 
 
 def init_app() -> Flask:

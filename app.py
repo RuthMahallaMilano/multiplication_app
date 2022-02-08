@@ -62,7 +62,7 @@ def home():
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(exercises_dict[session["current_question"]]["answer"]):
-            flash("The answer is incorrect. Try again", "error")
+            flash("The answer is incorrect. Try again.", category="error")
         else:
             flash('Correct answer!', category='success')
             solved_ex = Exercise.query.filter_by(ex=exercises_dict[session["current_question"]]["ex"]).first()
@@ -135,4 +135,5 @@ def sign_up():
     return render_template("sign_up.j2", user=current_user)
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()
