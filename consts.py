@@ -8,7 +8,7 @@ load_dotenv()
 
 SECRETKEY = os.getenv("KEY")
 
-DB_PATH = 'sqlite:///C:\\Users\\israe\\homework\\week15\\multiplication_app\\multiplication.db'
+DB_PATH = os.getenv("DATABASE_URL")
 
 
 def init_app() -> Flask:
