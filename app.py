@@ -52,13 +52,18 @@ create_database()
 create_exercises_table()
 create_login_manager(app)
 exercises_dict = get_random_exercises_dict()
-
+# print(exercises_dict)
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+    # print("current_question" in session)
     if request.method == 'POST':
         entered_answer = request.form.get('answer')
+        # print("current_question" in session)
+        # print(session["current_question"])
+        # print(entered_answer)
+        # print(exercises_dict[session["current_question"]]["answer"])
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(exercises_dict[session["current_question"]]["answer"]):
