@@ -57,14 +57,8 @@ exercises_dict = get_random_exercises_dict()
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
-    solved = [exercise.ex for exercise in solved_exercises]
-    score = sum([exercise.score for exercise in solved_exercises])
-    session["current_question"] = str(score + 1)
-
     if request.method == 'POST':
         entered_answer = request.form.get('answer')
-
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(exercises_dict[session["current_question"]]["answer"]):
@@ -78,12 +72,21 @@ def home():
             db.session.add(user)
             db.session.commit()
             session["current_question"] = str(int(session["current_question"]) + 1)
-
+    elif "current_question" not in session:
+        score = get_solved_exercises_and_score()[1]
+        session["current_question"] = str(score + 1)
     elif session["current_question"] not in exercises_dict:
         session.pop("current_question")
         return render_template("success.j2", user=current_user)
-
+    solved, score = get_solved_exercises_and_score()
     return render_template("home.j2", question=exercises_dict[session["current_question"]]["ex"], user=current_user, solved=solved, score=score)
+
+
+def get_solved_exercises_and_score():
+    solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
+    solved = [exercise.ex for exercise in solved_exercises]
+    score = sum([exercise.score for exercise in solved_exercises])
+    return solved, score
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -109,6 +112,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.pop("current_question")
     return redirect(url_for('login'))
 
 
