@@ -57,8 +57,21 @@ exercises_dict = get_random_exercises_dict()
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+    solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
+    solved = [exercise.ex for exercise in solved_exercises]
+    score = sum([exercise.score for exercise in solved_exercises])
+    # print(score)
+    session["current_question"] = str(score + 1)
+    # print(session)
+    # print(session["current_question"])
+    # print(exercises_dict[session["current_question"]]["ex"])
+    # print(exercises_dict)
     if request.method == 'POST':
         entered_answer = request.form.get('answer')
+        # print("----------")
+        # print(exercises_dict)
+        # print(entered_answer)
+        # print(exercises_dict[session["current_question"]]["answer"])
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(exercises_dict[session["current_question"]]["answer"]):
@@ -72,14 +85,19 @@ def home():
             db.session.add(user)
             db.session.commit()
             session["current_question"] = str(int(session["current_question"]) + 1)
-    if "current_question" not in session:
-        session["current_question"] = "1"
+    # if "current_question" not in session:
+
+    #     solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
+    #     solved = [exercise.ex for exercise in solved_exercises]
+    #     score = sum([exercise.score for exercise in solved_exercises])
+    #     print(score)
+        
+    #     session["current_question"] = str(score + 1)
+
     elif session["current_question"] not in exercises_dict:
         session.pop("current_question")
         return render_template("success.j2", user=current_user)
-    solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
-    solved = [exercise.ex for exercise in solved_exercises]
-    score = sum([exercise.score for exercise in solved_exercises])
+
     return render_template("home.j2", question=exercises_dict[session["current_question"]]["ex"], user=current_user, solved=solved, score=score)
 
 
