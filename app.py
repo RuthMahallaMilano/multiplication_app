@@ -86,7 +86,6 @@ def get_solved_exercises_and_score():
 
 
 @app.route('/login', methods=['GET', 'POST'])
-@login_required
 def login():
     if request.method == 'POST':
         nickname = request.form.get('nickname')
