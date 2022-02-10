@@ -1,6 +1,6 @@
 from consts import app, db, DB_PATH
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, LoginManager, login_required, login_user, logout_user
 
 from model import Exercise, User
@@ -13,11 +13,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 def create_database() -> None:
     if not path.exists(DB_PATH):
         db.create_all()
-        # print('Created Database!')
 
 
 def create_exercises_table() -> None:
-    # print(len(Exercise.query.all()))
     if len(Exercise.query.all()) == 0:
         exercises = []
         for i in range(1, 11):
@@ -29,19 +27,11 @@ def create_exercises_table() -> None:
                 exercises.append((exercise, ans))
         random.shuffle(exercises)
         for exercise, ans in exercises:
-            # print(exercise)
-            # print(ans)
             ex_line = Exercise(ex=exercise, answer=ans, score=1)
             db.session.add(ex_line)
         db.session.commit()
-        example = Exercise.query.get(1)
-        print(example.id)        
-        print(example.ex)
-        print(example.answer)
-        print("__________")
+        
 
-
-# def create_login_manager(app: Flask) -> None:
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -51,63 +41,38 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-# def get_random_exercises_dict() -> dict:
-#     exercises = Exercise.query.all()
-#     random.shuffle(exercises)
-#     shuffled_exercises = [{'ex': ex.ex, 'answer': ex.answer} for ex in exercises]
-#     d = dict(enumerate(shuffled_exercises, 1))
-#     return {str(key): value for key, value in d.items()}
-
-
 create_database()
 create_exercises_table()
-# create_login_manager(app)
-# exercises_dict = get_random_exercises_dict()
-# print(exercises_dict)
+
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    # print("current_question" in session)
     if request.method == 'POST':
         current_ex = Exercise.query.get(session["current_question"])
         entered_answer = request.form.get('answer')
-        # print("current_question" in session)
-        # print(session["current_question"])
-        # print(entered_answer)
-        # print(exercises_dict[session["current_question"]]["answer"])
         if not entered_answer:
             flash("Please enter an answer", "error")
         elif entered_answer != str(current_ex.answer): 
             print(entered_answer)
             print(type(entered_answer))
             print(current_ex.answer)
-            print(type(current_ex.answer)) # str(exercises_dict[session["current_question"]]["answer"]):
+            print(type(current_ex.answer)) 
             flash("The answer is incorrect. Try again.", category="error")
         else:
             flash('Correct answer!', category='success')
-            # solved_ex = Exercise.query.get(ex_id)
             user_id = session["user_id"]
             user = User.query.filter_by(id=user_id).first()
             user.exercises.append(current_ex)
             db.session.add(user)
             db.session.commit()
             session["current_question"] += 1
-            # session["current_question"] = str(int(session["current_question"]) + 1)
-
     # if it's the first time:
-    elif not User.query.filter_by(id=session["user_id"]).first().exercises:  #"current_question" not in session:
+    elif not User.query.filter_by(id=session["user_id"]).first().exercises:
         session["current_question"] = 1
-
     # if user solved all exercises:
-    # elif session["current_question"] > 100:  # session["current_question"] not in exercises_dict:
     elif session["current_question"] > 100:
-        # session.pop("current_question")
         return render_template("success.j2", user=current_user)
-    
-    # solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
-    # solved = [exercise.ex for exercise in solved_exercises]
-    # score = sum([exercise.score for exercise in solved_exercises])
     current_ex = Exercise.query.get(session["current_question"])
     solved, score = get_solved_exercises_and_score()
     return render_template("home.j2", question=current_ex.ex, user=current_user, solved=solved, score=score)
@@ -175,4 +140,4 @@ def sign_up():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
