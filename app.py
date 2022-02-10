@@ -49,6 +49,8 @@ create_exercises_table()
 @login_required
 def home():
     if request.method == 'POST':
+        if session["current_question"] > 100:      # if user solved all exercises:
+            return render_template("success.j2", user=current_user)
         current_ex = Exercise.query.get(session["current_question"])
         entered_answer = request.form.get('answer')
         if not entered_answer:
@@ -71,8 +73,8 @@ def home():
     elif not User.query.filter_by(id=session["user_id"]).first().exercises:
         session["current_question"] = 1
     # if user solved all exercises:
-    elif session["current_question"] > 100:
-        return render_template("success.j2", user=current_user)
+    # elif session["current_question"] > 100:
+    #     return render_template("success.j2", user=current_user)
     current_ex = Exercise.query.get(session["current_question"])
     solved, score = get_solved_exercises_and_score()
     return render_template("home.j2", question=current_ex.ex, user=current_user, solved=solved, score=score)
