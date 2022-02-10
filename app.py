@@ -97,12 +97,11 @@ def home():
 
     # if it's the first time:
     elif not User.query.filter_by(id=session["user_id"]).first().exercises:  #"current_question" not in session:
-        ex_id = 1
         session["current_question"] = 1
 
     # if user solved all exercises:
     # elif session["current_question"] > 100:  # session["current_question"] not in exercises_dict:
-    elif session["current_question"] == 100:
+    elif session["current_question"] > 100:
         # session.pop("current_question")
         return render_template("success.j2", user=current_user)
     
