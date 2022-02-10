@@ -16,6 +16,19 @@
 }
 
 
+@media screen and (min-width: 600px) {
+    .col1 {
+      width: 50%;
+      float: left;
+    }
+
+    .col2 {
+      width: 50%;
+      float: right;
+    }
+}
+
+
 header {
     overflow: hidden;
     background-image: url('background.jpg');
@@ -27,6 +40,7 @@ header h1 {
     font-size: 3em;
     padding: 0.2em;
     text-align: center; 
+    margin: 1em;
 }
 
 
@@ -95,18 +109,5 @@ body {
 
 
 .col2 {
-    margin-top: 1em;
-}
-
-
-@media screen and (min-width: 600px) {
-    .col1 {
-      width: 50%;
-      float: left;
-    }
-
-    .col2 {
-      width: 50%;
-      float: right;
-    }
+    margin-top: 2em;
 }
