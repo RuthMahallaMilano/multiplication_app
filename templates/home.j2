@@ -43,8 +43,8 @@
           <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionEx">
             <div class="accordion-body">
               <ul>
-                {% for ex in solved %}
-                <li>{{ ex }}</li>
+                {% for ex, answer in solved %}
+                  <li>{{ ex }} = {{ answer }}</li>
                 {% endfor %}
               </ul> 
             </div>

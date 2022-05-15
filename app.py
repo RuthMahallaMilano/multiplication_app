@@ -36,6 +36,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -56,11 +57,7 @@ def home():
         entered_answer = request.form.get('answer')
         if not entered_answer:
             flash("Please enter an answer", "error")
-        elif entered_answer != str(current_ex.answer): 
-            print(entered_answer)
-            print(type(entered_answer))
-            print(current_ex.answer)
-            print(type(current_ex.answer)) 
+        elif entered_answer != str(current_ex.answer):
             flash("The answer is incorrect. Try again.", category="error")
         else:
             flash('Correct answer!', category='success')
@@ -80,7 +77,7 @@ def home():
 
 def get_solved_exercises_and_score():
     solved_exercises = User.query.filter_by(id=session["user_id"]).first().exercises
-    solved = [exercise.ex for exercise in solved_exercises]
+    solved = ((exercise.ex, exercise.answer) for exercise in solved_exercises)
     score = sum([exercise.score for exercise in solved_exercises])
     return solved, score
 
