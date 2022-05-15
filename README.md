@@ -1,4 +1,4 @@
-# Learn Multiplication Table app
+# Learning Multiplication Table app
 
 This app was developed so that my children can learn and practice the multiplication table in a fun way, and see that it is possible to program interesting and nice things as well :smiley:
 
