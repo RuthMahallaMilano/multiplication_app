@@ -8,11 +8,12 @@ load_dotenv()
 
 SECRETKEY = os.getenv("KEY")
 
+
 def get_db_path() -> str:
-    DB_PATH = os.getenv("DATABASE_URL")
-    if DB_PATH.startswith("postgres://"):
-        DB_PATH = DB_PATH.replace("postgres://", "postgresql://", 1)
-    return DB_PATH
+    db_path = os.getenv("DATABASE_URL")
+    if db_path.startswith("postgres://"):
+        db_path = db_path.replace("postgres://", "postgresql://", 1)
+    return db_path
 
 
 DB_PATH = get_db_path()
